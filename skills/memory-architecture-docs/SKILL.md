@@ -47,6 +47,16 @@ Every planned item must preserve:
 7. Gotchas: surprising callers, data states, deployment details, or risks.
 8. Pattern to mirror: existing file or implementation when one exists.
 
+For a TDD-required item, preserve these fields in addition to all eight
+requirements:
+
+9. Behavioral contract: Given / When / Then observable behavior.
+10. Test location and name: exact test path and identifier.
+11. Commands: exact RED, GREEN, and broader regression commands.
+12. Expected proof: RED assertion failure and GREEN result.
+13. Exemption decision: when applicable, reason, rejected test, and alternate
+    proof.
+
 A plan fails if executor must rediscover decision, location, or data shape.
 
 For a complex phase, run `audit-plan-zero-context` before posting it for user
@@ -76,6 +86,12 @@ Rules:
 
 - Store patterns, diagrams, paths, contracts, and decisions.
 - Do not store implementation bodies.
+- Under `Key Findings & Risks`, keep TDD evidence in a `### TDD Evidence`
+  subsection with columns: `Item`, `Contract`, `RED`, `GREEN / regression`,
+  and `Exemption`.
+- Record only durable TDD evidence: causal test result, production symbol
+  changed, regression result, or accepted exemption. Do not copy implementation
+  bodies into this record.
 - Record decision immediately: `- Chose X over Y — reason Z.`
 - Definition of Done must be observable: test count, query result, grep count,
   or exact behavior.
@@ -87,10 +103,33 @@ Rules:
 ```md
 ### Phase N — Title
 
-- [ ] **N.M** Concise atomic action:
+- [ ] **N.M** Concise feature behavior:
   - Why this action exists.
-  - Exact file, symbol, data shape, or constraint.
-  → `command` exits 0 and output contains `expected value`.
+  - Production plan: `<production path>::<symbol>`; interface/data shape:
+    `<input> -> <output>`; intended smallest change: `<behavior>`.
+  - Test plan: `<test path>::<test name>`; pattern to mirror:
+    `<existing test>`.
+  - Constraints, non-goals, and rejected alternative: `<details>`.
+  - TDD: required|exempt.
+  - Contract: Given `<precondition/input>`, when `<action>`, then
+    `<observable result>`.
+  - Test map: `<case 1>`; `<boundary/error/regression case when relevant>`.
+  - RED: `<targeted command>`; expected assertion:
+    `<expected>`, actual pre-feature result: `<actual>`; production files
+    unchanged.
+  - GREEN: `<production path>::<symbol>`; smallest change:
+    `<behavior>`; `<targeted command>` exits 0.
+  - REFACTOR: `<behavior-preserving cleanup or none>`; rerun targeted command.
+  - Regression: `<broader regression command>` exits 0 and output contains
+    `<expected result>`.
+  - When TDD: exempt — Reason: `<why focused test has no signal or cannot run
+    safely>`; Rejected test: `<type> — why`; Alternate proof:
+    `<command/check> -> <observable result>`.
+  - RED evidence: `<command>` exited 1; expected `<value>`, got `<value>`;
+    production files unchanged.
+  - GREEN evidence: `<command>` exited 0 after `<production path>::<symbol>`
+    changed; regression `<command>` exited 0.
+  → `<regression command>` exits 0 and output contains `<expected result>`.
 ```
 
 Rules:
@@ -98,6 +137,9 @@ Rules:
 - One checkbox equals one coherent, reviewable change.
 - Item title is one concise sentence.
 - Put multiple actions, rationale, conditions, and snippets in sub-bullets.
+- TDD fields supplement, never replace, exact planned production/test paths,
+  symbols, interfaces, data shapes, constraints, non-goals, rejected
+  alternatives, and pattern to mirror.
 - Include `BEFORE` / `AFTER` snippets for non-trivial code changes when they
   remove ambiguity.
 - Use placeholders such as `{{table_name}}`, never project-specific IDs.
@@ -123,6 +165,11 @@ Rules:
 
 Never modify source code unless exact action exists in unchecked `TO_DO.md`
 item.
+
+For a TDD-required item, invoke `test-driven-development` before production
+edit. Record causal RED proof in both `TO_DO.md` and `CURRENT_TASK.md` before
+GREEN implementation. An exemption requires reason, rejected test, and
+explicit alternate proof in both records.
 
 When requested work is absent:
 
@@ -183,6 +230,10 @@ Expected result: zero planning-document references.
 
 - Read current `TO_DO.md` before beginning next item.
 - Work one checkbox at a time unless user explicitly approves batch.
+- For TDD-required behavior, write and run one focused test before production
+  edit; do not start GREEN until RED fails for intended assertion.
+- After GREEN and relevant regression proof, update both `TO_DO.md` and
+  `CURRENT_TASK.md` with concise RED/GREEN evidence before checking item.
 - Run commands owned by TO_DO item; do not hand ordinary verification back to
   user.
 - Prefer existing repository commands for reset, backfill, migration, and
@@ -194,9 +245,14 @@ Expected result: zero planning-document references.
 ## Session Loop
 
 1. Read first unchecked TO_DO item.
-2. Read CURRENT_TASK context needed for it.
-3. Implement only item scope.
-4. Run stated verification.
-5. Mark item complete.
-6. Report result and ask before next item when needed.
-7. When phase is complete, request archive confirmation.
+2. Read CURRENT_TASK context needed for it and preserve full implementation
+   plan.
+3. For TDD-required work, invoke `test-driven-development`, write next test,
+   run RED, and record causal evidence in both planning records.
+4. Implement only smallest GREEN change for current contract; rerun focused
+   test.
+5. Refactor only with focused test green; run stated broader regression.
+6. Record GREEN/regression proof or exemption alternate proof in both records.
+7. Mark item complete.
+8. Report result and ask before next item when needed.
+9. When phase is complete, request archive confirmation.
