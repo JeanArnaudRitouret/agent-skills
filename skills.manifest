@@ -4,6 +4,10 @@ debug-function
 explain-like-im-dumb
 llm-prompt-design
 memory-architecture-docs
+peon-ping-config
+peon-ping-log
+peon-ping-toggle
+peon-ping-use
 python-code-modification
 python-commenting-standards
 python-type-patterns

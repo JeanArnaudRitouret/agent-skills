@@ -35,6 +35,26 @@ live here; host directories use managed links instead of copied skill folders.
 - Maintains `ROADMAP`, current-task, to-do, and done planning records.
 - Requires zero-context implementation plans and explicit verification.
 
+### `peon-ping-config`
+
+- Updates Peon Ping volume, voice-pack rotation, categories, and output settings.
+- Changes configuration without changing Peon hooks, voice assets, or installation.
+
+### `peon-ping-log`
+
+- Logs pushup or squat repetitions through Peon Trainer.
+- Reports updated progress and explains how to enable Trainer when disabled.
+
+### `peon-ping-toggle`
+
+- Pauses or resumes Peon Ping sound notifications.
+- Routes volume, pack, and category changes to Peon Ping configuration.
+
+### `peon-ping-use`
+
+- Selects a voice pack for current chat session through installed Peon integration.
+- Provides manual pack, session, config, and state fallback when hook is unavailable.
+
 ### `python-code-modification`
 
 - Guides scripts that edit, move, or remove Python source blocks.
